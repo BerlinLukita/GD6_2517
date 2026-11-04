@@ -18,20 +18,34 @@ rel="stylesheet">
                     <th>Kota</th>
                     <th>Harga</th>
                     <th>Sisa</th>
+                    <th>Status</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach ($daftarKonser as $id => $konser)
+           <tbody>
+                @forelse ($daftarKonser as $id => $konser)
                     <tr>
-                        <td>{{ $id }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $konser['nama'] }}</td>
                         <td>{{ $konser['kota'] }}</td>
                         <td>Rp{{ number_format($konser['harga'], 0, ',', '.') }}</td>
                         <td>{{ $konser['sisa'] }}</td>
+                        <td>
+                            @if ($konser['sisa'] > 10)
+                                <span class="badge bg-success">Tersedia</span>
+                            @elseif ($konser['sisa'] > 0)
+                                <span class="badge bg-warning text-dark">Hampir habis</span>
+                            @else
+                                <span class="badge bg-danger">Sold Out</span>
+                            @endif
+                        </td>
                     </tr>
-                 @endforeach
-             </tbody>
-          </table>
-      </div>
+                @empty
+                <tr>
+                    <td colspan="6" class="text-center">Belum ada konser.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
