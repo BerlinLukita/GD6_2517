@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -40,7 +41,6 @@ $daftarKonser = [
     ],
 ];
 
-
 Route::get('/', function () {
     return view('home');
 })->name('home');
@@ -48,6 +48,21 @@ Route::get('/', function () {
 Route::get('/konser', function () use ($daftarKonser) {
     return view('konser', compact('daftarKonser'));
 })->name('konser.index');
+
+
+Route::get('/konser/kota/{kota}', function ($kota) use ($daftarKonser) {
+
+    $kota = ucfirst(strtolower($kota));
+
+    $hasil = collect($daftarKonser)->where('kota', $kota);
+
+    return view('konser', [
+        'daftarKonser' => $hasil,
+        'judul' => 'Konser di ' . $kota
+    ]);
+
+})->whereAlpha('kota')->name('konser.kota');
+
 
 Route::get('/konser/{id}', function ($id) use ($daftarKonser) {
     abort_unless(isset($daftarKonser[$id]), 404);
