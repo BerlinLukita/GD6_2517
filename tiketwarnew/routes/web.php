@@ -74,3 +74,5 @@ Route::get('/konser/{id}', function ($id) use ($daftarKonser) {
 })->whereNumber('id')->name('konser.detail');
 
 Route::view('/tentang', 'about')->name('tentang');
+
+Route::view('/kontak', 'kontak')->name('kontak');
