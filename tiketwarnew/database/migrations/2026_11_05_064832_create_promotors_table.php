@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('konsers', function (Blueprint $table) {
+        Schema::create('promotors', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('promotor_id')->constrained()->restrictOnDelete(); // BARU
