@@ -1,23 +1,31 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>@yield('title', 'TiketWar') - TiketWar</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('css/style.css') }}"> 
-</head>
-<body>
-       @include('partials.navbar') 
+<nav class="navbar navbar-expand navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="{{ route('home') }}">TiketWar</a>
 
-    <main class="container mt-4">
-        @yield('content')
-    </main>
+        <ul class="navbar-nav">
+            {{-- Menu Beranda --}}
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
+                   href="{{ route('home') }}">
+                    Beranda
+                </a>
+            </li>
 
-    @include('partials.footer') 
+            {{-- Menu Konser --}}
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('konser.*') ? 'active' : '' }}"
+                   href="{{ route('konser.index') }}">
+                    Konser
+                </a>
+            </li>
 
-    <script
-src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+            {{-- Menu Tentang --}}
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}"
+                   href="{{ route('tentang') }}">
+                    Tentang
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
