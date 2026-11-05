@@ -19,7 +19,7 @@
             @forelse ($daftarKonser as $id => $konser)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $konser['nama'] }}</td>
+                    <td class="{{ $konser['sisa'] == 0 ? 'sold-out' : '' }}">{{ $konser['nama'] }}</td>
                     <td>{{ $konser['kota'] }}</td>
                     <td>Rp{{ number_format($konser['harga'], 0, ',', '.') }}</td>
                     <td>{{ $konser['sisa'] }}</td>
