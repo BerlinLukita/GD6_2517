@@ -5,7 +5,23 @@
 
 @section('content')
 
-    <h1 class="mb-3">Daftar Konser</h1>
+    <h1 class="mb-3">{{ $judul ?? 'Daftar Konser' }}</h1>
+
+    <div class="mb-3">
+        <a href="{{ route('konser.index') }}" class="btn btn-primary btn-sm">
+            Semua Konser
+    </a>
+
+    <a href="{{ route('konser.kota', ['kota' => 'Jakarta']) }}"
+        class="btn btn-outline-primary btn-sm">
+        Jakarta
+    </a>
+
+    <a href="{{ route('konser.kota', ['kota' => 'Yogyakarta']) }}"
+       class="btn btn-outline-primary btn-sm">
+        Yogyakarta
+    </a>
+</div>
 
     <table class="table table-bordered">
         <thead class="table-light">
