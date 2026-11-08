@@ -3,7 +3,10 @@
 @section('title', 'Daftar Konser')
 
 @section('content')
+<div class="d-flex justify-content-between align-items-center mb-3"> {{-- DIUBAH --}}
 <h1 class="mb-3">Daftar Konser</h1>
+<a href="{{ route('konser.create') }}" class="btn btn-success">Tambah Konser</a> {{-- BARU --}}
+</div>
 
 <table class="table table-bordered">
     <thead class="table-light">
