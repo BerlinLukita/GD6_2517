@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Http\Controllers\KonserController;
@@ -10,6 +9,7 @@ Route::get('/', function () {
 
 Route::view('/tentang', 'about')->name('tentang');
 
+Route::view('/kontak', 'kontak')->name('kontak');
 
 Route::get('/konser', [KonserController::class, 'index'])
     ->name('konser.index');
