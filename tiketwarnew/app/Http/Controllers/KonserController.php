@@ -10,13 +10,26 @@ use Illuminate\View\View;
 
 class KonserController extends Controller
 {
-    public function index(): View
+    // Menampilkan daftar konser dan filter berdasarkan kota
+    public function index(Request $request): View
     {
-        $daftarKonser = Konser::with('promotor')->orderBy('tanggal')->get();
+        $daftarKonser = Konser::with('promotor')
+            ->when(
+                $request->query('kota'),
+                fn ($query, $kota) => $query->where('kota', $kota)
+            )
+            ->orderBy('tanggal')
+            ->get();
 
-        return view('konser', compact('daftarKonser'));
+        $daftarKota = Konser::select('kota')
+            ->distinct()
+            ->orderBy('kota')
+            ->pluck('kota');
+
+        return view('konser', compact('daftarKonser', 'daftarKota'));
     }
 
+    // Menampilkan detail konser
     public function show($id): View
     {
         $konser = Konser::with('promotor')->findOrFail($id);
@@ -88,5 +101,4 @@ class KonserController extends Controller
         return redirect()->route('konser.index')
             ->with('success', 'Konser berhasil dihapus.');
     }
-
 }
