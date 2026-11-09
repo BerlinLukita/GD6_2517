@@ -66,3 +66,14 @@
         @enderror
     </div>
 </div>
+
+{{-- Field Deskripsi --}}
+<div class="mb-3">
+    <label for="deskripsi" class="form-label">Deskripsi Konser</label>
+    <textarea name="deskripsi" id="deskripsi" rows="4"
+              class="form-control @error('deskripsi') is-invalid @enderror"
+              placeholder="Masukkan deskripsi konser...">{{ old('deskripsi', $konser->deskripsi ?? '') }}</textarea>
+    @error('deskripsi')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
