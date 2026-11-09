@@ -7,16 +7,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Konser extends Model
 {
-    protected $fillable = [ // BARU
+    protected $fillable = [
         'promotor_id',
         'nama',
         'kota',
         'harga',
         'sisa',
         'tanggal',
+        'deskripsi',
     ];
 
-    public function promotor(): BelongsTo // BARU: satu konser, satu promotor
+    public function promotor(): BelongsTo
     {
         return $this->belongsTo(Promotor::class);
     }
