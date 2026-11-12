@@ -175,6 +175,91 @@ Solusi: Gunakan helper asset() Laravel agar path CSS selalu mengarah ke folder p
 
    Solusi: Tambahkan `@method('PUT')` setelah `@csrf` di dalam form agar Laravel mengenali permintaan sebagai PUT.
 
+
+## Latihan Debugging – Modul 10: Transaksi Pesanan
+
+### 1. Debugging 1 – Total dari Form
+
+**Kesalahan:**
+
+Kesalahannya adalah mengambil nilai `total` dari input form menggunakan `$request->total`. Nilai tersebut berasal dari browser sehingga pengguna dapat mengubahnya sendiri melalui Developer Tools (F12), meskipun input menggunakan tipe `hidden`.
+
+**Mengapa berbahaya:**
+
+Pengguna dapat memanipulasi nilai total pembayaran. Contohnya, harga tiket sebenarnya Rp1.500.000, tetapi pengguna mengubah nilai total menjadi Rp1. Dengan demikian, sistem dapat menyimpan total pembayaran yang tidak sesuai dengan harga sebenarnya.
+
+**Perbaikan:**
+
+Nilai total harus dihitung langsung di sisi server berdasarkan harga konser dan jumlah tiket yang dipesan. Jangan mengambil nilai total dari input pengguna.
+
+Contoh perbaikan:
+
+```php
+Pesanan::create([
+    'konser_id' => $terkunci->id,
+    'nama_pemesan' => $data['nama_pemesan'],
+    'email' => $data['email'],
+    'jumlah' => $data['jumlah'],
+    'harga_satuan' => $terkunci->harga,
+    'total' => $terkunci->harga * $data['jumlah'],
+    'status' => Pesanan::MENUNGGU_BAYAR,
+]);
+```
+
+Dengan cara ini, total pembayaran selalu dihitung oleh server berdasarkan harga tiket yang berlaku dan jumlah tiket yang dipesan.
+
+### 2. Debugging 2 – Pengecekan Stok Tanpa Kunci
+
+**Kesalahan:**
+
+Kesalahannya adalah melakukan pengecekan stok menggunakan `$konser->sisa` tanpa mengunci baris data konser terlebih dahulu. Pengecekan dan pengurangan stok juga tidak dilindungi dengan transaksi database.
+
+**Mengapa berbahaya:**
+
+Kesalahan ini dapat menyebabkan *overselling*, yaitu tiket terjual melebihi stok yang tersedia.
+
+Contohnya, stok tiket hanya tersisa 1. Dua pembeli melakukan pemesanan hampir bersamaan. Keduanya dapat membaca stok yang sama, yaitu 1, sehingga keduanya lolos pengecekan dan berhasil membuat pesanan. Akibatnya, satu tiket dapat terjual kepada dua pembeli.
+
+**Perbaikan:**
+
+Gunakan `DB::transaction()` untuk memastikan seluruh proses pemesanan berhasil atau dibatalkan bersama-sama. Gunakan `lockForUpdate()` sebelum membaca dan mengecek stok agar pembeli lain harus menunggu sampai transaksi pertama selesai.
+
+Contoh perbaikan:
+
+```php
+$berhasil = DB::transaction(function () use ($konser, $data) {
+    $terkunci = Konser::lockForUpdate()->findOrFail($konser->id);
+
+    if ($data['jumlah'] > $terkunci->sisa) {
+        throw ValidationException::withMessages([
+            'jumlah' => 'Sisa tiket hanya ' . $terkunci->sisa . '.',
+        ]);
+    }
+
+    Pesanan::create([
+        'konser_id' => $terkunci->id,
+        'nama_pemesan' => $data['nama_pemesan'],
+        'email' => $data['email'],
+        'jumlah' => $data['jumlah'],
+        'harga_satuan' => $terkunci->harga,
+        'total' => $terkunci->harga * $data['jumlah'],
+        'status' => Pesanan::MENUNGGU_BAYAR,
+    ]);
+
+    $terkunci->decrement('sisa', $data['jumlah']);
+
+    return true;
+});
+```
+
+Dengan menggunakan transaksi database dan `lockForUpdate()`, pengecekan stok, pembuatan pesanan, serta pengurangan stok dilakukan secara aman. Jika terjadi kesalahan, perubahan dalam transaksi akan dibatalkan (*rollback*).
+
+---
+
+
+
+
+
    ## Jawaban Pertanyaan Seeder
 
     Jumlah data tetap 3 promotor dan 5 konser karena perintah php artisan migrate:fresh --seed akan menghapus seluruh tabel terlebih dahulu, menjalankan ulang semua migration, kemudian menjalankan DatabaseSeeder.
