@@ -31,6 +31,12 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('laporan.index') }}">
+                    Laporan
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('promotor.index') }}">Promotor</a>
             </li>
 
