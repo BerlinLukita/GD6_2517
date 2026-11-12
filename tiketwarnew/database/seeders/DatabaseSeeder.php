@@ -63,11 +63,14 @@ class DatabaseSeeder extends Seeder
 
         Konser::create([
             'promotor_id' => $harmoni->id,
-            'nama' => 'Konser Akustik Kota',
+            'nama' => 'Malam Akustik Kota',
             'kota' => 'Bandung',
             'harga' => 250000,
-            'sisa' => 0,
+            'sisa' => 60,
             'tanggal' => '2027-01-30',
         ]);
+
+        $this->call(PesananSeeder::class); 
+
     }
 }
