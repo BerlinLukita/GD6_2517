@@ -115,4 +115,8 @@
         @endforelse
     </tbody>
 </table>
+<a href="{{ route('laporan.pdf', request()->query()) }}"
+   class="btn btn-danger">
+    Unduh PDF
+</a>
 @endsection
