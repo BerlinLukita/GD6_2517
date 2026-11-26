@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,6 @@ class LaporanController extends Controller
     {
         $daftarPesanan = $this->pesananTerfilter($request)->latest()->get();
 
-        // Kartu ringkasan: dihitung dari seluruh pesanan, tidak terpengaruh filter.
         $totalPesanan = Pesanan::count();
 
         $pendapatan = Pesanan::where('status', Pesanan::LUNAS)->sum('total');
@@ -28,7 +28,21 @@ class LaporanController extends Controller
         ));
     }
 
-    // Satu sumber filter untuk dashboard, PDF, dan (nanti) CSV.
+    public function pdf(Request $request)
+    {
+        $daftarPesanan = $this->pesananTerfilter($request)->latest()->get();
+
+        $pendapatan = $daftarPesanan
+            ->where('status', Pesanan::LUNAS)
+            ->sum('total');
+
+        $pdf = Pdf::loadView('laporan-pdf', compact(
+            'daftarPesanan', 'pendapatan'
+        ))->setPaper('a4', 'portrait');
+
+        return $pdf->download('laporan-pesanan.pdf');
+    }
+
     private function pesananTerfilter(Request $request): Builder
     {
         return Pesanan::with('konser')
