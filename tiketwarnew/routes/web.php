@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController; 
 use App\Http\Controllers\LaporanController; 
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\KonserController;
@@ -94,3 +95,12 @@ Route::patch('/pesanan/{pesanan}/batal', [PesananController::class, 'batal'])
 
     Route::get('/laporan/pdf', [LaporanController::class, 'pdf'])
     ->name('laporan.pdf');
+
+Route::get('/login', [AuthController::class, 'showLogin'])
+    ->middleware('guest')->name('login');
+
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('guest')->name('login.proses');
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')->name('logout');
